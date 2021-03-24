@@ -2,6 +2,8 @@ import ctypes
 import mlir.ir as ir
 import mlir.execution_engine as ee
 import mlir.dialects.linalg.opdsl.lang as tc
+import mlir.conversions
+import mlir.passmanager as pm
 
 
 T1 = tc.TV.T1
@@ -40,11 +42,8 @@ func @rtclock() -> f64 {
 
 
 def to_llvm(module):
-  import mlir.conversions
-  import mlir.passmanager as pm
-  pm = pm.PassManager.parse("convert-std-to-llvm")
-  pm.run(module)
-  print(module)
+  manager = pm.PassManager.parse("convert-std-to-llvm")
+  manager.run(module)
   return module
 
 
