@@ -186,10 +186,17 @@ def to_mlir(op, input_shapes, output_shapes, iterations):
   return "\n".join(output)
 
 
-def to_llvm(module):
-  manager = pm.PassManager.parse("convert-std-to-llvm")
-  manager.run(module)
-  return module
+def make_pass(pass_name):
+  def run_pass(module):
+    manager = pm.PassManager.parse(pass_name)
+    manager.run(module)
+    return module 
+  return run_pass
+
+
+linalg_to_std = make_pass("convert-linalg-to-std")
+scf_to_std = make_pass("convert-scf-to-std")
+std_to_llvm = make_pass("convert-std-to-llvm")
 
 
 def invoke(op, input_shapes, output_shapes, iterations):
@@ -200,9 +207,9 @@ def invoke(op, input_shapes, output_shapes, iterations):
     mlir_module = ir.Module.parse(mlir_text)
     print("-- MLIR:")
     print(mlir_module)
-    llvm_module = to_llvm(mlir_module)
-    print("-- LLVM:")
-    print(llvm_module)
+    # llvm_module = std_to_llvm(mlir_module)
+    # print("-- LLVM:")
+    # print(llvm_module)
     # engine = ee.ExecutionEngine(llvm_module)
     # engine.invoke("entry")
 
