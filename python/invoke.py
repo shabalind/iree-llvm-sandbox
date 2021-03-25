@@ -93,7 +93,6 @@ def to_mlir(op, input_shapes, output_shapes, iterations):
         fill_name, init_name, value, tensor_ty, scalar_ty, tensor_ty))
     return fill_name
 
-
   def emit_for_start(init, to, step, arg_init, arg_type):
     name = fresh()
     i = fresh()
@@ -158,7 +157,7 @@ def to_mlir(op, input_shapes, output_shapes, iterations):
 
     # Start of the loop.
     loop_init = emit_constant("0", "index")
-    loop_to = emit_constant("1000", "index")
+    loop_to = emit_constant(str(iterations), "index")
     loop_step = emit_constant("1", "index")
     emit_for_start(loop_init, loop_to, loop_step, output_value, output_type) 
 
